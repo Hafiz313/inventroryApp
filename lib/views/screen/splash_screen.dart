@@ -2,8 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-
-import '../../main.dart';
 import 'logint_screen.dart';
 
 

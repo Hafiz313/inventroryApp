@@ -1,7 +1,6 @@
 import 'package:get/get.dart';
 import 'package:inventory_app/core/datamodels/FyearModels.dart';
 
-import '../core/datamodels/LocationModels.dart';
 import 'login_repository.dart';
 
 

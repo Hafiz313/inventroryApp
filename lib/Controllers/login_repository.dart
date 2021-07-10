@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:flutter/services.dart';
+
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:inventory_app/core/datamodels/BrandModels.dart';
@@ -18,24 +18,20 @@ class Repository {
   //--------------get student account list------------
   static Future<bool>  getLogin(String userName,String password,String location,String fYear) async {
 
-    var url = Uri.parse("http://cserp.southeastasia.cloudapp.azure.com:55080/api/Login?username=admin&Password=12354&Location=01&Fyear=2019");
-   // var url = Uri.parse(baseUrl + "Login");
+  var url = Uri.parse("http://cserp.southeastasia.cloudapp.azure.com:55080/api/Login?username=$userName&Password=$password&Location=$location&Fyear=$fYear");
+   //var url = Uri.parse(baseUrl + "Login");
     try{
       final response = await http.post(
         url,
         body: {
-          /*'username': "$userName",
+         /* 'username': "$userName",
           'Password': "$password",
           'Location': "$location",
           'Fyear': "$fYear",*/
-          'username': "admin",
-          'Password': "12354",
-          'Location': "01",
-          'Fyear': "2019",
         },
       );
     //  print(response.body);
-      print("===${response.statusCode }==========response.body:${response.body}=====");
+      print("===${response.statusCode }====userName:$userName=======password:$password======location:$location====fYear:$fYear====response.body:${response.body}=====");
       if (response.statusCode == 200) {
 
         return true;

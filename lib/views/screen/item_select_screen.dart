@@ -1,29 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
-import 'package:inventory_app/Controllers/BrandController.dart';
-import 'package:inventory_app/Controllers/FYearController.dart';
 import 'package:inventory_app/Controllers/InverotyReslutsController.dart';
-import 'package:inventory_app/Controllers/LoginLocationController.dart';
 import 'package:inventory_app/core/datamodels/FyearModels.dart';
 import 'package:inventory_app/core/datamodels/LocationModels.dart';
-import 'package:inventory_app/core/veiwmodels/auth_viewmodel.dart';
-import 'package:inventory_app/Controllers/login_repository.dart';
-import 'package:inventory_app/views/screen/YourPage.dart';
+import 'package:inventory_app/utils/app_color.dart';
+import 'package:inventory_app/utils/app_sizes.dart';
 import 'package:inventory_app/views/screen/item_result_screen.dart';
 import 'package:inventory_app/views/widgets/MyTextFormField.dart';
-import 'package:provider/provider.dart';
-import 'package:inventory_app/utils/app_color.dart';
-import 'package:inventory_app/utils/app_constant.dart';
-import 'package:inventory_app/utils/app_sizes.dart';
-import 'package:inventory_app/utils/volidators.dart';
-import 'package:inventory_app/views/widgets/app_buttons.dart';
 import 'package:inventory_app/views/widgets/app_text_styles.dart';
-import 'package:inventory_app/views/widgets/text_field.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
-
 
 import '../../core/datamodels/LocationModels.dart';
 import '../base_view.dart';

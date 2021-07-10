@@ -1,9 +1,6 @@
 import 'package:get/get.dart';
-import 'package:inventory_app/core/datamodels/BrandModels.dart';
-import 'package:inventory_app/core/datamodels/CategoryModels.dart';
 import 'package:inventory_app/core/datamodels/InventoryResultModel.dart';
 
-import '../core/datamodels/LocationModels.dart';
 import 'login_repository.dart';
 
 

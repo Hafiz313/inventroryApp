@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 
 
 
-final Color kAppPrimaryColor = HexColor("#f89a20");
-final Color kRedColor = HexColor("#e32606)");
+//final Color kAppPrimaryColor = HexColor("#f89a20");
+//final Color kRedColor = HexColor("#e32606)");
 
-final Color kWhiteColor = HexColor("#ffffff");
-final Color kPrimaryTextColor = HexColor("#636363");
+//final Color kWhiteColor = HexColor("#ffffff");
+final Color kWhiteColor = Color(0xFFffffff);
+//final Color kPrimaryTextColor = HexColor("#636363");
+final Color kPrimaryTextColor = Color(0xFF636363);
+final Color kAppPrimaryColor = Color(0xFFf89a20);
+final Color kRedColor = Color(0xFFe32606);
+
 
 //Color(0xFFe06287)
 
