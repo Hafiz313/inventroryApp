@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:inventory_app/utils/app_sizes.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 // ignore: must_be_immutable
 class BaseScaffold extends StatefulWidget {
@@ -55,6 +57,7 @@ class _BaseScaffoldState extends State<BaseScaffold> {
 
   @override
   Widget build(BuildContext context) {
+
     AppSizes().init(context);
     return SafeArea(
 

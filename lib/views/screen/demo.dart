@@ -1,29 +1,7 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:get/get.dart';
-import 'package:inventory_app/Controllers/FYearController.dart';
-import 'package:inventory_app/Controllers/LoginLocationController.dart';
-import 'package:inventory_app/core/datamodels/FyearModels.dart';
-import 'package:inventory_app/core/datamodels/LocationModels.dart';
-import 'package:inventory_app/utils/app_color.dart';
-import 'package:inventory_app/utils/app_constant.dart';
-import 'package:inventory_app/utils/app_sizes.dart';
-import 'package:inventory_app/views/widgets/MyTextFormField.dart';
-import 'package:inventory_app/views/widgets/app_buttons.dart';
-import 'package:inventory_app/views/widgets/app_text_styles.dart';
-import 'package:searchable_dropdown/searchable_dropdown.dart';
-
-import '../../core/datamodels/LocationModels.dart';
-import '../base_view.dart';
 import 'package:http/http.dart' as http;
-
-/*List<dynamic> subjectDuplicateItems = [];
-List<dynamic> gradeDuplicateItems = [];*/
-List<dynamic> subjectItems;
-//var gradeItems = [];
 
 class HomePage extends StatefulWidget {
   @override
@@ -36,10 +14,9 @@ class _HomePageState extends State<HomePage> {
 
   List<UserDetails> _userDetails = [];
 
-  //final String url = 'https://jsonplaceholder.typicode.com/users';
-  var url = Uri.parse("http://cserp.southeastasia.cloudapp.azure.com:55080/api/Locations");
+ // final String url = 'https://jsonplaceholder.typicode.com/users';
 
-
+  var url =Uri.parse("https://jsonplaceholder.typicode.com/users");
   // Get json result and convert it to model. Then add
   Future<Null> getUserDetails() async {
     final response = await http.get(url);
@@ -96,8 +73,8 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (context, i) {
                 return new Card(
                   child: new ListTile(
-                 //   leading: new CircleAvatar(backgroundImage: new NetworkImage(_searchResult[i].profileUrl,),),
-                    title: new Text(_searchResult[i].firstName + ' ' + _searchResult[i].lastName),
+                    title: new Text(_searchResult[i].firstName ),
+                    //title: new Text(_searchResult[i].firstName + ' ' + _searchResult[i].lastName),
                   ),
                   margin: const EdgeInsets.all(0.0),
                 );
@@ -108,8 +85,8 @@ class _HomePageState extends State<HomePage> {
               itemBuilder: (context, index) {
                 return new Card(
                   child: new ListTile(
-                   // leading: new CircleAvatar(backgroundImage: new NetworkImage(_userDetails[index].profileUrl,),),
-                    title: new Text(_userDetails[index].firstName + ' ' + _userDetails[index].lastName),
+                 //   title: new Text(_userDetails[index].firstName + ' ' + _userDetails[index].lastName),
+                    title: new Text(_userDetails[index].firstName ),
                   ),
                   margin: const EdgeInsets.all(0.0),
                 );
@@ -127,23 +104,29 @@ class _HomePageState extends State<HomePage> {
       setState(() {});
       return;
     }
+
     _userDetails.forEach((userDetail) {
-      if (userDetail.firstName.contains(text) || userDetail.lastName.contains(text))
+      if (userDetail.firstName.contains(text.toLowerCase()) || userDetail.firstName.contains(text))
+    //  if (userDetail.firstName.contains(text) || userDetail.lastName.contains(text))
         _searchResult.add(userDetail);
     });
+
+    setState(() {});
   }
 }
 
 
 class UserDetails {
+  final int id;
   final String firstName, lastName;
 
-  UserDetails({this.firstName, this.lastName});
+  UserDetails({this.id, this.firstName, this.lastName,});
 
   factory UserDetails.fromJson(Map<String, dynamic> json) {
     return new UserDetails(
-      firstName: json['Code'],
-      lastName: json['Name'],
+      id: json['id'],
+      firstName: json['name'],
+      lastName: json['username'],
     );
   }
 }

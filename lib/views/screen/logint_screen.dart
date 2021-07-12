@@ -1,27 +1,28 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:get/get.dart';
 import 'package:inventory_app/Controllers/FYearController.dart';
 import 'package:inventory_app/Controllers/LoginLocationController.dart';
+import 'package:inventory_app/Controllers/login_repository.dart';
 import 'package:inventory_app/core/datamodels/FyearModels.dart';
 import 'package:inventory_app/core/datamodels/LocationModels.dart';
 import 'package:inventory_app/utils/app_color.dart';
 import 'package:inventory_app/utils/app_constant.dart';
 import 'package:inventory_app/utils/app_sizes.dart';
+import 'package:inventory_app/utils/preference_utils.dart';
+import 'package:inventory_app/views/screen/product_screen.dart';
 import 'package:inventory_app/views/widgets/MyTextFormField.dart';
 import 'package:inventory_app/views/widgets/app_buttons.dart';
 import 'package:inventory_app/views/widgets/app_text_styles.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 import '../../core/datamodels/LocationModels.dart';
 import '../base_view.dart';
-import 'demo.dart';
 
-/*List<dynamic> subjectDuplicateItems = [];
-List<dynamic> gradeDuplicateItems = [];*/
-List<dynamic> subjectItems;
-//var gradeItems = [];
+
 
 class LoginScreen extends StatefulWidget {
   static const id="sign_in_page";
@@ -39,34 +40,15 @@ class _LoginScreenState extends State<LoginScreen> {
   final FYearController _fYearController =Get.put(FYearController());
    LocationModels selectedLocationValue;
   FyearModels selectedFYearValue;
+
+  ProgressDialog pr;
   void dispose() {
     // TODO: implement dispose
     _userNameController.clear();
     _passwordController.clear();
     super.dispose();
   }
-      showProcessBar(BuildContext context) {
-    AlertDialog alert = AlertDialog(
-        backgroundColor:Color(0x01000000) ,
-        contentPadding: EdgeInsets.fromLTRB(0,0,0,0),
-        content: Container(
-          height: 50,
-          child: SpinKitWave(color: kAppPrimaryColor,size: AppSizes.appVerticalLg *0.55,),
 
-
-
-        ));
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // final _notifier = Provider.of<AuthViewModel>(context);
-        return alert;
-        // return Provider.value(value: _notifier, child: alert);;
-      },
-    );
-  }
 
   @override
   void initState() {
@@ -74,8 +56,17 @@ class _LoginScreenState extends State<LoginScreen> {
   //  getList();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
+    pr = new ProgressDialog(context);
+    pr.style(
+      backgroundColor: Colors.white,
+      progressWidget: Container(
+          width: double.infinity,
+          child: Center(child: SpinKitFadingCircle(color: Colors.black))),
+    );
+
     AppSizes().init(context);
     return BaseScaffold(
       body: Obx(() {return SingleChildScrollView(
@@ -170,7 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         alignment: Alignment.centerLeft,
                         child: Text("Location",style: simpleText(fontSize: 15,color: kAppPrimaryColor),)),
                     SizedBox(height: AppSizes.appVerticalLg *.1,),
-                /*    Container(
+                    Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(width: 1,color: kAppPrimaryColor),
@@ -204,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       //   Text("$selectLocation",style: simpleText(color: kPrimaryTextColor,fontSize: 15,),),
                       //   Icon(Icons.arrow_drop_down,size: 30,color: kPrimaryTextColor,)
                       // ],),
-                    ),*/
+                    ),
                     SizedBox(height: AppSizes.appVerticalLg *.2,),
                     Container(
                         alignment: Alignment.centerLeft,
@@ -252,52 +243,83 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       width: double.infinity,
                       child:roundRectangleBtn(txt: kLogIn,textColor: kPrimaryTextColor,bgColor: kAppPrimaryColor,onPressed: () async {
-                        Navigator.pop(context);
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => HomePage(
-                                    )));
-
-                        //  open(context);
-                        /*Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ProductScreen(
-                                )));*/
-                        // if(signInForm.currentState.validate() && selectedLocationValue.code.toString().isNotEmpty && selectedFYearValue.toString().isNotEmpty){
-                        //
-                        //
-                        //   showProcessBar(context);
-                        //    bool isLogin = await Repository.getLogin(
-                        //       "${_userNameController.value.text.toString()}",
-                        //     "${_passwordController.value.text.toString()}",
-                        //     "${selectedLocationValue.code.toString()}",
-                        //         "${selectedFYearValue.code.toString()}");
-                        //
-                        //   if(isLogin){
-                        //     Navigator.pop(context);
+                        // Navigator.pop(context);
                         //     Navigator.push(
                         //         context,
                         //         MaterialPageRoute(
-                        //             builder: (context) => ProductScreen(
+                        //             builder: (context) => HomePage(
                         //             )));
-                        //     Fluttertoast.showToast(msg: "Login Successfully $isLogin", toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM,);
-                        //
-                        //   }
-                        //   else{
-                        //     print("----------------not ok------------------");
-                        //     Navigator.pop(context);
-                        //     Fluttertoast.showToast(msg: "Login Error", toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM,
-                        //     );
-                        //   }
-                        // }
-                        // else{
-                        //   Fluttertoast.showToast(msg: "Fill all inputs", toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM,
-                        //   );
-                        // }
+
+                        //  open(context);
+                        // Navigator.push(
+                        //     context,
+                        //     MaterialPageRoute(
+                        //         builder: (context) => ProductScreen(
+                        //         )));
+
+                        if(signInForm.currentState.validate() && selectedLocationValue.code.toString().isNotEmpty && selectedFYearValue.toString().isNotEmpty){
 
 
+                          pr.show();
+                           bool isLogin = await Repository.getLogin(
+                              "${_userNameController.value.text.toString()}",
+                            "${_passwordController.value.text.toString()}",
+                            "${selectedLocationValue.code.toString()}",
+                                "${selectedFYearValue.code.toString()}");
+
+                          if(isLogin){
+                            setState(() {
+                              PreferenceUtils.setString(kShareLoginLocation,selectedLocationValue.code.toString());
+                              PreferenceUtils.setString(kShareLoginFyear,selectedFYearValue.code.toString());
+                            });
+
+
+
+                            pr.hide();
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ProductScreen(
+                                    )));
+
+
+                            Get.snackbar(
+                              "Login alert",
+                              "Successfully login",
+                              margin: EdgeInsets.only(top: 10, left: 10, right: 10),
+                              dismissDirection: SnackDismissDirection.HORIZONTAL,
+                              duration: Duration(seconds: 4),
+                            );
+
+                          }
+                          else{
+                            print("----------------not ok------------------");
+                            pr.hide();
+                            Get.snackbar(
+                              "Login alert",
+                              "Error",
+                              margin: EdgeInsets.only(top: 10, left: 10, right: 10),
+                              dismissDirection: SnackDismissDirection.HORIZONTAL,
+                              duration: Duration(seconds: 4),
+                            );
+
+                          }
+                        }
+                        else{
+                          Get.snackbar(
+                            "",
+                            "",
+                            borderRadius: 20.0,
+                            borderWidth: 1.0,
+                            titleText: Text("Please file all inputs",style: TextStyle(fontSize: 20),textAlign: TextAlign.center,)
+                            ,
+                            borderColor: kAppPrimaryColor,
+                            margin: EdgeInsets.only(top: 0, left: 10, right: 10,bottom: 0),
+                            dismissDirection: SnackDismissDirection.VERTICAL,
+                            snackPosition: SnackPosition.TOP,
+                            duration: Duration(seconds: 4),
+                          );
+                        }
 
                       }),
                     ),
@@ -381,130 +403,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
 
-  open(BuildContext context) {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return StatefulBuilder(
-            builder: (context, setState) {
-              return AlertDialog(
-                backgroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(20.0))),
-                contentPadding: EdgeInsets.only(top: 5.0),
-                content: SingleChildScrollView(child: SearchInSubject()),
-                actions: [
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8.0),
-                    child: TextButton(
-                        child: Text(
-                          'Cancel',
-                          style: TextStyle(color: kRedColor),
-                        ),
-                        onPressed: () {
-                          setState(() {});
-                          Navigator.of(context).pop();
-                        }),
-                  ),
-                ],
-              );
-            },
-          );
-        });
-  }
-}
-class SearchInSubject extends StatefulWidget {
 
-
-  @override
-  _SearchInSubjectState createState() => _SearchInSubjectState();
 }
 
-class _SearchInSubjectState extends State<SearchInSubject> {
-  final LocationController _loginLocationController = Get.put(LocationController());
-  static final TextEditingController _subjectController =
-  TextEditingController();
-  @override
-  void initState() {
-    subjectItems =_loginLocationController.locationList;
-    print(subjectItems);
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.maxFinite,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              onChanged: (value) {
-                filterSearchResults(value);
-              },
-              controller: _subjectController,
-              decoration: InputDecoration(
-                  labelText: "Search",
-                  hintText: "Search",
-                  prefixIcon: Icon(Icons.search),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(25.0)))),
-            ),
-          ),
-          ConstrainedBox(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height * 0.4,
-            ),
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: subjectItems.length,
-              itemBuilder: (context, index) {
-                return GestureDetector(
-                  onTap: () {
-                  //  print(subjectItems[index]);
-                    print(subjectItems.length);
-                    setState(() {});
-                    FocusScope.of(context).requestFocus(FocusNode());
-                  },
-                  child: ListTile(
-                    title: Text('${subjectItems[index]}'),
-                  ),
-                );
-              },
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  void filterSearchResults(String query) {
-    print(query);
-    print(subjectItems);
-    List<dynamic> dummySearchList = [];
-    dummySearchList.addAll(subjectItems);
-    if (query.isNotEmpty) {
-      List<dynamic> dummyListData = [];
-      dummySearchList.forEach((item) {
-        if (item.contains(query)) {
-          dummyListData.add(item);
-        }
-      });
-      setState(() {
-        subjectItems.clear();
-        subjectItems.addAll(dummyListData);
-      });
-      return;
-    } else {
-      setState(() {
-        subjectItems.clear();
-        subjectItems.addAll(subjectItems);
-      });
-    }
-  }
-}
 
 
 

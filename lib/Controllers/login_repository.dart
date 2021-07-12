@@ -7,6 +7,9 @@ import 'package:inventory_app/core/datamodels/CategoryModels.dart';
 import 'package:inventory_app/core/datamodels/FyearModels.dart';
 import 'package:inventory_app/core/datamodels/InventoryResultModel.dart';
 import 'package:inventory_app/core/datamodels/LocationModels.dart';
+import 'package:inventory_app/core/datamodels/SubcategoryModel.dart';
+import 'package:inventory_app/utils/app_constant.dart';
+import 'package:inventory_app/utils/preference_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 String baseUrl = "http://cserp.southeastasia.cloudapp.azure.com:55080/api/";
@@ -33,6 +36,8 @@ class Repository {
     //  print(response.body);
       print("===${response.statusCode }====userName:$userName=======password:$password======location:$location====fYear:$fYear====response.body:${response.body}=====");
       if (response.statusCode == 200) {
+
+
 
         return true;
       } else {
@@ -115,7 +120,32 @@ class Repository {
 
     }
   }
-  static Future< List<InventoryResultModel>>  getInventoryResluts() async {
+  static Future< List<SubcategoryModels>>  getSubcategoryList() async {
+
+    var url = Uri.parse(baseUrl + "InventoryStyle");
+    try{
+      final response = await http.get(url);
+
+      var body = json.decode(response.body);
+      print("========getCategoryList:$body============");
+
+      //  print(response.body);
+
+
+      if (response.statusCode == 200) {
+
+        return  subcategoryModelsFromJson(body);
+
+      } else {
+        print('Failed');
+
+      }
+    } catch(e){
+      print('error $e');
+
+    }
+  }
+  static Future< List<InventoryResultModel>>  getInventoryResluts(String brandCode,String categoryCode,String subCategoryCode,String itemText) async {
 
     var url = Uri.parse("http://cserp.southeastasia.cloudapp.azure.com:55080/api/Inventory?Brand&Category&SubCategory&ItemName&Fyear=2019&pagesize=50&pageno=1");
     try{

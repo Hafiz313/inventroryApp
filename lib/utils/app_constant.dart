@@ -4,6 +4,9 @@ const String kLoginUserId = "LoginUserId";
 const String kLoginRefreshToken = "LoginRefreshToken";
 const String kLoginAccessToken = "LoginAccessToken";
 const String kProfileResponse = "ProfileResponse";
+const String kShareLoginLocation = "loginLocation";
+const String kShareLoginFyear = "loginFyear";
+
 
 
 //app constants

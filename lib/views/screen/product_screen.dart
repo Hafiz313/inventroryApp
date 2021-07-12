@@ -1,28 +1,36 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:get/get.dart';
 import 'package:inventory_app/Controllers/BrandController.dart';
 import 'package:inventory_app/Controllers/CategoryController.dart';
+import 'package:inventory_app/Controllers/InverotyReslutsController.dart';
 import 'package:inventory_app/Controllers/LoginLocationController.dart';
+import 'package:inventory_app/Controllers/SubCategoryController.dart';
 import 'package:inventory_app/core/datamodels/BrandModels.dart';
 import 'package:inventory_app/core/datamodels/CategoryModels.dart';
 import 'package:inventory_app/core/datamodels/FyearModels.dart';
+import 'package:inventory_app/core/datamodels/InventoryResultModel.dart';
 import 'package:inventory_app/core/datamodels/LocationModels.dart';
+import 'package:inventory_app/core/datamodels/SubcategoryModel.dart';
 import 'package:inventory_app/utils/app_color.dart';
+import 'package:inventory_app/utils/app_constant.dart';
 import 'package:inventory_app/utils/app_sizes.dart';
+import 'package:inventory_app/utils/preference_utils.dart';
 import 'package:inventory_app/views/screen/item_select_screen.dart';
 import 'package:inventory_app/views/widgets/MyTextFormField.dart';
 import 'package:inventory_app/views/widgets/app_buttons.dart';
 import 'package:inventory_app/views/widgets/app_text_styles.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 import '../../core/datamodels/LocationModels.dart';
 import '../base_view.dart';
+import 'dart:convert';
 
+import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
 
 class ProductScreen extends StatefulWidget {
-  static const id="sign_in_page";
   @override
   _ProductScreenState createState() => _ProductScreenState();
 }
@@ -30,55 +38,44 @@ class ProductScreen extends StatefulWidget {
 class _ProductScreenState extends State<ProductScreen> {
 
   GlobalKey<FormState> productForm = GlobalKey<FormState>();
-  bool _isVisible = false;
-  static final TextEditingController _userNameController = new TextEditingController();
-  static final TextEditingController _passwordController = new TextEditingController();
+  static final TextEditingController _itemNameController = new TextEditingController();
   final CategoryController _categoryController = Get.put(CategoryController());
   final BrandController _brandController = Get.put(BrandController());
+  final SubCategoryController _subCategoryController = Get.put(SubCategoryController());
+  InventoryResultsController _inventoryResultsController;
+  ProgressDialog pr;
 
- final LocationController _loginLocationController = Get.put(LocationController());
+ List<int> matchListIndex=[];
 
   BrandModels selectBrandValue;
-  CategoryModels selectCategoryValue;
-  LocationModels selectedLocationValue;
-  FyearModels selectedFYearValue;
+ CategoryModels selectCategoryValue;
+  SubcategoryModels selectSubcategoryValue;
+  String selectSubcategoryStr= "Please select Items";
+  String selectSubcategoryCode= "";
+  bool isSubcategoryView=false;
   void dispose() {
     // TODO: implement dispose
-    _userNameController.clear();
-    _passwordController.clear();
+    _itemNameController.clear();
     super.dispose();
   }
-      showProcessBar(BuildContext context) {
-    AlertDialog alert = AlertDialog(
-        backgroundColor:Color(0x01000000) ,
-        contentPadding: EdgeInsets.fromLTRB(0,0,0,0),
-        content: Container(
-          height: 50,
-          child: SpinKitWave(color: kAppPrimaryColor,size: AppSizes.appVerticalLg *0.55,),
 
-
-
-        ));
-
-    // show the dialog
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        // final _notifier = Provider.of<AuthViewModel>(context);
-        return alert;
-        // return Provider.value(value: _notifier, child: alert);;
-      },
-    );
-  }
 
   @override
   void initState() {
     // TODO: implement initState
+    //print("======= PreferenceUtils:${ PreferenceUtils.getString(kShareLoginLocation)}====${  PreferenceUtils.getString(kShareLoginFyear)}===");
   //  getList();
     super.initState();
   }
   @override
   Widget build(BuildContext context) {
+    pr = new ProgressDialog(context);
+    pr.style(
+      backgroundColor: Colors.white,
+      progressWidget: Container(
+          width: double.infinity,
+          child: Center(child: SpinKitFadingCircle(color: Colors.black))),
+    );
     AppSizes().init(context);
     return BaseScaffold(
       body: Obx(() {return SingleChildScrollView(
@@ -172,7 +169,7 @@ class _ProductScreenState extends State<ProductScreen> {
                                 , value: item);
                           }).toList(),
                           isExpanded: true,
-                          value: selectBrandValue,
+                          value: selectCategoryValue,
                           isCaseSensitiveSearch: true,
                           searchHint: new Text(
                             'Select ',
@@ -180,9 +177,16 @@ class _ProductScreenState extends State<ProductScreen> {
                           ),
                           onChanged: (value) {
                             setState(() {
-                              selectBrandValue = value;
-                              print("=======selectedValue :$selectBrandValue===");
+                              selectCategoryValue = value;
+                              print("=============${selectCategoryValue.code.toString()}===============");
                             });
+                            for(int i=0; i <=_categoryController.categoryList.length; i++){
+                              if(_subCategoryController.list[i].type==selectCategoryValue.code.toString()){
+                                matchListIndex.add(i);
+                                //matchList.add(i);
+                                print("========selectCategoryValue :${_subCategoryController.list[i].name}========");
+                              }
+                            }
                           },
                         ):Container(
                           height: 50,
@@ -200,41 +204,82 @@ class _ProductScreenState extends State<ProductScreen> {
                           alignment: Alignment.centerLeft,
                           child: Text("Sub Category",style: simpleText(fontSize: 15,color: kAppPrimaryColor),)),
                       SizedBox(height: AppSizes.appVerticalLg *.1,),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(width: 1,color: kAppPrimaryColor),
-                        ),
-                        child:!_loginLocationController.isLoading.value? SearchableDropdown(
-                          items: _loginLocationController.locationList.map((item) {
-                            return new DropdownMenuItem<LocationModels>(
-                                child: Text(item.name)
-                                , value: item);
-                          }).toList(),
-                          isExpanded: true,
-                          value: selectedLocationValue,
-                          isCaseSensitiveSearch: true,
-                          searchHint: new Text(
-                            'Select ',
-                            style: new TextStyle(fontSize: 20,color: Colors.blue),
+                      InkWell(
+                        onTap: (){
+                          setState(() {
+                            isSubcategoryView = !isSubcategoryView;
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10,vertical: 8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(width: 1,color: kAppPrimaryColor),
                           ),
-                          onChanged: (value) {
-                            setState(() {
-                              selectedLocationValue = value;
-                              print("=======selectedValue :$selectedLocationValue===");
-                            });
-                          },
-                        ):Container(
-                          height: 50,
-                          child: SpinKitWave(color: kAppPrimaryColor,size: AppSizes.appVerticalLg *0.55,),
+                          child:
+                 /*       SearchableDropdown(
+                            items: _subCategoryController.list.map((item) {
+                              return new DropdownMenuItem<SubcategoryModels>(
+                                  child: Text(item.name)
+                                  , value: item);
+                            }).toList(),
+                            isExpanded: true,
+                            value: selectSubcategoryValue,
+                            isCaseSensitiveSearch: true,
+                            searchHint: new Text(
+                              'Select ',
+                              style: new TextStyle(fontSize: 20,color: Colors.blue),
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                selectSubcategoryValue = value;
+                                print("=======selectedValue :${selectSubcategoryValue.code}===");
+                              });
+                            },
+                          )*/
+                          //     :Container(
+                          //   height: 50,
+                          //   child: SpinKitWave(color: kAppPrimaryColor,size: AppSizes.appVerticalLg *0.55,),
+                          // ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                            Text("$selectSubcategoryStr",style: simpleText(color: kPrimaryTextColor,fontSize: 15,),),
+                              isSubcategoryView? Icon(Icons.arrow_drop_up,size: 30,color: kPrimaryTextColor,):Icon(Icons.arrow_drop_down,size: 30,color: kPrimaryTextColor,)
+                          ],),
                         ),
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //   children: [
-                        //   Text("$selectLocation",style: simpleText(color: kPrimaryTextColor,fontSize: 15,),),
-                        //   Icon(Icons.arrow_drop_down,size: 30,color: kPrimaryTextColor,)
-                        // ],),
                       ),
+                      isSubcategoryView? Container(
+                        height: 300,
+                          margin: const EdgeInsets.only(
+                              bottom: 0, left: 25, right: 25, top: 25),
+                          child: matchListIndex.isNotEmpty?
+
+                          Obx(() {
+                            if (_subCategoryController.isLoading.value) {
+                              return Container(
+                                height: 50,
+                                child: SpinKitWave(color: kAppPrimaryColor,size: AppSizes.appVerticalLg *0.55,),
+                              );
+                            }
+                            return ListView.builder(
+                              itemCount: matchListIndex.length,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        isSubcategoryView = !isSubcategoryView;
+                                        selectSubcategoryStr= _subCategoryController.list[matchListIndex[index]].name;
+                                        selectSubcategoryCode= _subCategoryController.list[matchListIndex[index]].code;
+                                      });
+                                    },
+                                    child: ListTile(
+                                      title:
+                                      Text(_subCategoryController.list[matchListIndex[index]].name),
+                                    ));
+                              },
+                            );
+                          }):Container(child: Center(child: Text("No Data")),)):Container(),
                       SizedBox(height: AppSizes.appVerticalLg *.2,),
                       Container(
                           alignment: Alignment.centerLeft,
@@ -248,7 +293,7 @@ class _ProductScreenState extends State<ProductScreen> {
                         isPhone: false,
                         isEmail: true,
                         autoFocus: false,
-                        controller: _userNameController,
+                        controller: _itemNameController,
                       ),
                       SizedBox(height: AppSizes.appVerticalLg *.4,),
                       Container(
@@ -257,44 +302,41 @@ class _ProductScreenState extends State<ProductScreen> {
                         ),
                         width: double.infinity,
                         child:roundRectangleBtn(txt: "Search",textColor: kPrimaryTextColor,bgColor: kAppPrimaryColor,onPressed: () async {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => ItemSelectScreen(
-                                  )));
+                          pr.show();
 
-                          // if(productForm.currentState.validate()){
-                          //
-                          //   showProcessBar(context);
-                          //   bool isLogin = await Repository.getLogin(
-                          //       "${_userNameController.value}",
-                          //     "${_passwordController.value}",
-                          //     "${selectedLocationValue.code}",
-                          //         "$selectedFYearValue");
-                          //
-                          //   if(isLogin){
-                          //     Navigator.pop(context);
-                          //     Fluttertoast.showToast(msg: "Login", toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM,);
-                          //   }
-                          //   else{
-                          //     print("----------------not ok------------------");
-                          //     Navigator.pop(context);
-                          //     Fluttertoast.showToast(msg: "NOt", toastLength: Toast.LENGTH_SHORT, gravity: ToastGravity.BOTTOM,
-                          //     );
-                          //   }
-                          // }
+                          var url = Uri.parse("http://cserp.southeastasia.cloudapp.azure.com:55080/api/Inventory?Brand=${selectBrandValue.code.toString()}&Category=${selectCategoryValue.code.toString()}&SubCategory=$selectSubcategoryCode&ItemName=${_itemNameController.text.toString()}&Fyear=${ PreferenceUtils.getString(kShareLoginFyear)}&pagesize=50&pageno=1");
+                 //         var url = Uri.parse("http://cserp.southeastasia.cloudapp.azure.com:55080/api/Inventory?Brand=&Category=&SubCategory=&ItemName=&Fyear=2020&pagesize=50&pageno=1");
+                          try{
+                            final response = await http.get(url);
 
-                        //  signInForm.currentState.validate();
-                        //  print("----------------not ok------------------");
-                          //showProcessBar(context);
-                         // openSpokenAlert();
+                            var body = json.decode(response.body);
+                            print("===body:$body=====${selectBrandValue.code.toString()} ${selectCategoryValue.code.toString()} $selectSubcategoryCode ${_itemNameController.text.toString()}===========");
+
+                            //  print(response.body);
 
 
-                         // LocationModels locatonModels;
-                         // locatonModels=await LoginController.getLocationList();
-                         // List<FyearModels> fyerList;
-                         // fyerList= LoginController.getFyearList();
-                       //  print("======${fyerList[0].code}========");
+                            if (response.statusCode == 200) {
+                              pr.hide();
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ItemSelectScreen(
+                                        inventoryResultsList:inventoryResultModelFromJson(body),
+                                      )));
+
+
+                            } else {
+
+
+                            }
+                          } catch(e){
+                            print('error $e');
+
+                          }
+
+
+                          // _inventoryResultsController = Get.put(InventoryResultsController());
+
 
                         }),
                       ),
@@ -327,14 +369,14 @@ class _ProductScreenState extends State<ProductScreen> {
                 margin: const EdgeInsets.only(
                     bottom: 0, left: 25, right: 25, top: 25),
                 child: Obx(() {
-                  if (_loginLocationController.isLoading.value) {
+                  if (_subCategoryController.isLoading.value) {
                     return Container(
                       height: 50,
                       child: SpinKitWave(color: kAppPrimaryColor,size: AppSizes.appVerticalLg *0.55,),
                     );
                   }
                   return ListView.builder(
-                    itemCount: _loginLocationController.locationList.length,
+                    itemCount: _subCategoryController.list.length,
                     itemBuilder: (context, index) {
                       return GestureDetector(
                           onTap: () {
@@ -343,7 +385,7 @@ class _ProductScreenState extends State<ProductScreen> {
                           },
                           child: ListTile(
                             title:
-                            Text(_loginLocationController.locationList[index].name),
+                            Text(_subCategoryController.list[index].name),
                           ));
                     },
                   );

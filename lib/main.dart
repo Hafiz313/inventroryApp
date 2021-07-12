@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:inventory_app/utils/app_constant.dart';
 import 'package:inventory_app/utils/app_sizes.dart';
 import 'package:inventory_app/views/screen/logint_screen.dart';
@@ -9,9 +10,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'core/veiwmodels/auth_viewmodel.dart';
 
 void main() {
-  runApp(MultiProvider(providers: [
-    ChangeNotifierProvider(create: (_) => AuthViewModel()),
-  ], child: MyApp()));
+  runApp(GetMaterialApp(
+    home: MultiProvider(providers: [
+      ChangeNotifierProvider(create: (_) => AuthViewModel()),
+    ], child: MyApp()),
+  ));
 }
 
 class MyApp extends StatelessWidget {
