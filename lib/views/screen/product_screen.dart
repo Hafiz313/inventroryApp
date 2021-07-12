@@ -50,9 +50,12 @@ class _ProductScreenState extends State<ProductScreen> {
   BrandModels selectBrandValue;
  CategoryModels selectCategoryValue;
   SubcategoryModels selectSubcategoryValue;
-  String selectSubcategoryStr= "Please select Items";
+  String selectSubcategoryStr= "Select SubCategory ";
   String selectSubcategoryCode= "";
   bool isSubcategoryView=false;
+  String selectCategoryStr= "Select Category";
+  String selectCategoryCode= "";
+  bool isCategoryView=false;
   void dispose() {
     // TODO: implement dispose
     _itemNameController.clear();
@@ -157,48 +160,133 @@ class _ProductScreenState extends State<ProductScreen> {
                           alignment: Alignment.centerLeft,
                           child: Text("Category",style: simpleText(fontSize: 15,color:kAppPrimaryColor),)),
                       SizedBox(height: AppSizes.appVerticalLg *.1,),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(width: 1,color: kAppPrimaryColor),
-                        ),
-                        child:!_categoryController.isLoading.value? SearchableDropdown(
-                          items: _categoryController.categoryList.map((item) {
-                            return new DropdownMenuItem<CategoryModels>(
-                                child: Text(item.name)
-                                , value: item);
-                          }).toList(),
-                          isExpanded: true,
-                          value: selectCategoryValue,
-                          isCaseSensitiveSearch: true,
-                          searchHint: new Text(
-                            'Select ',
-                            style: new TextStyle(fontSize: 20,color: Colors.blue),
+                      // Container(
+                      //   decoration: BoxDecoration(
+                      //     borderRadius: BorderRadius.circular(10),
+                      //     border: Border.all(width: 1,color: kAppPrimaryColor),
+                      //   ),
+                      //   child:!_categoryController.isLoading.value? SearchableDropdown(
+                      //     items: _categoryController.categoryList.map((item) {
+                      //       return new DropdownMenuItem<CategoryModels>(
+                      //           child: Text(item.name)
+                      //           , value: item);
+                      //     }).toList(),
+                      //     isExpanded: true,
+                      //     value: selectCategoryValue,
+                      //     isCaseSensitiveSearch: true,
+                      //     searchHint: new Text(
+                      //       'Select ',
+                      //       style: new TextStyle(fontSize: 20,color: Colors.blue),
+                      //     ),
+                      //     onChanged: (value) {
+                      //       setState(() {
+                      //         selectCategoryValue = value;
+                      //         print("=============${selectCategoryValue.code.toString()}===============");
+                      //       });
+                      //       for(int i=0; i <=_categoryController.categoryList.length; i++){
+                      //         if(_subCategoryController.list[i].type==selectCategoryValue.code.toString()){
+                      //           matchListIndex.add(i);
+                      //           //matchList.add(i);
+                      //           print("========selectCategoryValue :${_subCategoryController.list[i].name}========");
+                      //         }
+                      //       }
+                      //     },
+                      //   ):Container(
+                      //     height: 50,
+                      //     child: SpinKitWave(color: kAppPrimaryColor,size: AppSizes.appVerticalLg *0.55,),
+                      //   ),
+                      //   // Row(
+                      //   //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //   //   children: [
+                      //   //   Text("$selectLocation",style: simpleText(color: kPrimaryTextColor,fontSize: 15,),),
+                      //   //   Icon(Icons.arrow_drop_down,size: 30,color: kPrimaryTextColor,)
+                      //   // ],),
+                      // ),
+                      InkWell(
+                        onTap: (){
+                          setState(() {
+                            isCategoryView = !isCategoryView;
+                          });
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 10,vertical: 8),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(width: 1,color: kAppPrimaryColor),
                           ),
-                          onChanged: (value) {
-                            setState(() {
-                              selectCategoryValue = value;
-                              print("=============${selectCategoryValue.code.toString()}===============");
-                            });
-                            for(int i=0; i <=_categoryController.categoryList.length; i++){
-                              if(_subCategoryController.list[i].type==selectCategoryValue.code.toString()){
-                                matchListIndex.add(i);
-                                //matchList.add(i);
-                                print("========selectCategoryValue :${_subCategoryController.list[i].name}========");
-                              }
-                            }
-                          },
-                        ):Container(
-                          height: 50,
-                          child: SpinKitWave(color: kAppPrimaryColor,size: AppSizes.appVerticalLg *0.55,),
+                          child:
+                          /*       SearchableDropdown(
+                            items: _subCategoryController.list.map((item) {
+                              return new DropdownMenuItem<SubcategoryModels>(
+                                  child: Text(item.name)
+                                  , value: item);
+                            }).toList(),
+                            isExpanded: true,
+                            value: selectSubcategoryValue,
+                            isCaseSensitiveSearch: true,
+                            searchHint: new Text(
+                              'Select ',
+                              style: new TextStyle(fontSize: 20,color: Colors.blue),
+                            ),
+                            onChanged: (value) {
+                              setState(() {
+                                selectSubcategoryValue = value;
+                                print("=======selectedValue :${selectSubcategoryValue.code}===");
+                              });
+                            },
+                          )*/
+                          //     :Container(
+                          //   height: 50,
+                          //   child: SpinKitWave(color: kAppPrimaryColor,size: AppSizes.appVerticalLg *0.55,),
+                          // ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("$selectCategoryStr",style: simpleText(color: kPrimaryTextColor,fontSize: 15,),),
+                              isCategoryView? Icon(Icons.arrow_drop_up,size: 30,color: kPrimaryTextColor,):Icon(Icons.arrow_drop_down,size: 30,color: kPrimaryTextColor,)
+                            ],),
                         ),
-                        // Row(
-                        //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        //   children: [
-                        //   Text("$selectLocation",style: simpleText(color: kPrimaryTextColor,fontSize: 15,),),
-                        //   Icon(Icons.arrow_drop_down,size: 30,color: kPrimaryTextColor,)
-                        // ],),
                       ),
+                      isCategoryView? Container(
+                          height: 300,
+                          margin: const EdgeInsets.only(
+                              bottom: 0, left: 25, right: 25,),
+                          child: _categoryController.categoryList.isNotEmpty?
+
+                          Obx(() {
+                            if (_categoryController.isLoading.value) {
+                              return Container(
+                                height: 50,
+                                child: SpinKitWave(color: kAppPrimaryColor,size: AppSizes.appVerticalLg *0.55,),
+                              );
+                            }
+                            return ListView.builder(
+                              itemCount: _categoryController.categoryList.length,
+                              itemBuilder: (context, index) {
+                                return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        isCategoryView = !isCategoryView;
+                                        selectCategoryStr= _categoryController.categoryList[index].name;
+                                        selectCategoryCode= _categoryController.categoryList[index].code;
+                                        selectSubcategoryStr= "Please SubCategory Items";
+                                        matchListIndex.clear();
+                                      });
+                                      for(int i=0; i <=_categoryController.categoryList.length; i++){
+                                        if(_subCategoryController.list[i].type==selectCategoryCode){
+                                          matchListIndex.add(i);
+                                          //matchList.add(i);
+                                          print("========selectCategoryValue :${_subCategoryController.list[i].name}========");
+                                        }
+                                      }
+                                    },
+                                    child: ListTile(
+                                      title:
+                                      Text( selectCategoryStr= _categoryController.categoryList[index].name),
+                                    ));
+                              },
+                            );
+                          }):Container(child: Center(child: Text("No Data")),)):Container(),
                       SizedBox(height: AppSizes.appVerticalLg *.2,),
                       Container(
                           alignment: Alignment.centerLeft,
@@ -302,15 +390,18 @@ class _ProductScreenState extends State<ProductScreen> {
                         ),
                         width: double.infinity,
                         child:roundRectangleBtn(txt: "Search",textColor: kPrimaryTextColor,bgColor: kAppPrimaryColor,onPressed: () async {
+
+                          print("=======${selectBrandValue.code.toString()} $selectCategoryCode $selectSubcategoryCode ${_itemNameController.text.toString()}===========");
+
                           pr.show();
 
-                          var url = Uri.parse("http://cserp.southeastasia.cloudapp.azure.com:55080/api/Inventory?Brand=${selectBrandValue.code.toString()}&Category=${selectCategoryValue.code.toString()}&SubCategory=$selectSubcategoryCode&ItemName=${_itemNameController.text.toString()}&Fyear=${ PreferenceUtils.getString(kShareLoginFyear)}&pagesize=50&pageno=1");
+                          var url = Uri.parse("http://cserp.southeastasia.cloudapp.azure.com:55080/api/Inventory?Brand=${selectBrandValue.code.toString()}&Category=$selectCategoryCode&SubCategory=$selectSubcategoryCode&ItemName=${_itemNameController.text.toString()}&Fyear=${ PreferenceUtils.getString(kShareLoginFyear)}&pagesize=50&pageno=1");
                  //         var url = Uri.parse("http://cserp.southeastasia.cloudapp.azure.com:55080/api/Inventory?Brand=&Category=&SubCategory=&ItemName=&Fyear=2020&pagesize=50&pageno=1");
                           try{
                             final response = await http.get(url);
 
                             var body = json.decode(response.body);
-                            print("===body:$body=====${selectBrandValue.code.toString()} ${selectCategoryValue.code.toString()} $selectSubcategoryCode ${_itemNameController.text.toString()}===========");
+                            print("===body:$body===========");
 
                             //  print(response.body);
 
