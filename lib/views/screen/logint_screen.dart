@@ -276,7 +276,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
                             pr.hide();
-                            Navigator.push(
+                            Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => ProductScreen(

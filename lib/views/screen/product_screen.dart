@@ -391,12 +391,12 @@ class _ProductScreenState extends State<ProductScreen> {
                         width: double.infinity,
                         child:roundRectangleBtn(txt: "Search",textColor: kPrimaryTextColor,bgColor: kAppPrimaryColor,onPressed: () async {
 
-                          print("=======${selectBrandValue.code.toString()} $selectCategoryCode $selectSubcategoryCode ${_itemNameController.text.toString()}===========");
+                          print("=======${selectBrandValue.code.toString()} $selectCategoryCode $selectSubcategoryCode ${_itemNameController.text.toString()}======Fyear=${ PreferenceUtils.getString(kShareLoginFyear)}=====");
 
                           pr.show();
 
-                          var url = Uri.parse("http://cserp.southeastasia.cloudapp.azure.com:55080/api/Inventory?Brand=${selectBrandValue.code.toString()}&Category=$selectCategoryCode&SubCategory=$selectSubcategoryCode&ItemName=${_itemNameController.text.toString()}&Fyear=${ PreferenceUtils.getString(kShareLoginFyear)}&pagesize=50&pageno=1");
-                 //         var url = Uri.parse("http://cserp.southeastasia.cloudapp.azure.com:55080/api/Inventory?Brand=&Category=&SubCategory=&ItemName=&Fyear=2020&pagesize=50&pageno=1");
+                         var url = Uri.parse("http://cserp.southeastasia.cloudapp.azure.com:55080/api/Inventory?Brand=${selectBrandValue.code.toString()}&Category=$selectCategoryCode&SubCategory=$selectSubcategoryCode&ItemName=${_itemNameController.text.toString()}&Fyear=${ PreferenceUtils.getString(kShareLoginFyear)}&pagesize=50&pageno=1");
+                       //  var url = Uri.parse("http://cserp.southeastasia.cloudapp.azure.com:55080/api/Inventory?Brand=&Category=&SubCategory=&ItemName=&Fyear=2020&pagesize=50&pageno=1");
                           try{
                             final response = await http.get(url);
 
