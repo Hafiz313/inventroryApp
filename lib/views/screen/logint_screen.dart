@@ -21,6 +21,7 @@ import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 import '../../core/datamodels/LocationModels.dart';
 import '../base_view.dart';
+import 'demo.dart';
 
 
 
@@ -243,12 +244,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       width: double.infinity,
                       child:roundRectangleBtn(txt: kLogIn,textColor: kPrimaryTextColor,bgColor: kAppPrimaryColor,onPressed: () async {
-                        // Navigator.pop(context);
-                        //     Navigator.push(
-                        //         context,
-                        //         MaterialPageRoute(
-                        //             builder: (context) => HomePage(
-                        //             )));
+
 
                         //  open(context);
                         // Navigator.push(
@@ -276,7 +272,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
                             pr.hide();
-                            Navigator.pushReplacement(
+                            Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => ProductScreen(
