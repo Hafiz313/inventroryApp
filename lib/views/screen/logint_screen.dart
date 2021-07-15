@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:inventory_app/Controllers/FYearController.dart';
 import 'package:inventory_app/Controllers/LoginLocationController.dart';
 import 'package:inventory_app/Controllers/login_repository.dart';
+import 'package:inventory_app/core/datamodels/BrandModels.dart';
 import 'package:inventory_app/core/datamodels/FyearModels.dart';
 import 'package:inventory_app/core/datamodels/LocationModels.dart';
 import 'package:inventory_app/utils/app_color.dart';
@@ -21,6 +22,7 @@ import 'package:searchable_dropdown/searchable_dropdown.dart';
 
 import '../../core/datamodels/LocationModels.dart';
 import '../base_view.dart';
+import 'dart:convert';
 import 'demo.dart';
 
 
@@ -41,6 +43,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final FYearController _fYearController =Get.put(FYearController());
    LocationModels selectedLocationValue;
   FyearModels selectedFYearValue;
+
+  List<BrandModels> brandList;
 
   ProgressDialog pr;
   void dispose() {
@@ -80,11 +84,17 @@ class _LoginScreenState extends State<LoginScreen> {
             mainAxisSize: MainAxisSize.max,
             children: [
               SizedBox(height: AppSizes.appVerticalLg *1.5,),
-              Container(
-                height: AppSizes.appVerticalLg * 2,
-                width: AppSizes.appHorizontalLg * 3,
-                child: Image(
-                  image: AssetImage("images/logo.png"),
+              InkWell(
+                onTap: (){
+                  print("=============isBrand:${Repository.isBrand}===isCategory:${Repository.isCategory}===isSubCategory:${Repository.isSubCategory}======");
+
+                },
+                child: Container(
+                  height: AppSizes.appVerticalLg * 2,
+                  width: AppSizes.appHorizontalLg * 3,
+                  child: Image(
+                    image: AssetImage("images/logo.png"),
+                  ),
                 ),
               ),
               Form(
@@ -263,22 +273,22 @@ class _LoginScreenState extends State<LoginScreen> {
                             "${selectedLocationValue.code.toString()}",
                                 "${selectedFYearValue.code.toString()}");
 
+
+                         // if(isLogin && Repository.isBrand.value && Repository.isCategory.value && Repository.isSubCategory.value ){
                           if(isLogin){
+                          //  print("======isLogin$isLogin=======isBrand:${Repository.isBrand}===isCategory:${Repository.isCategory}===isSubCategory:${Repository.isSubCategory}======");
                             setState(() {
                               PreferenceUtils.setString(kShareLoginLocation,selectedLocationValue.code.toString());
                               PreferenceUtils.setString(kShareLoginFyear,selectedFYearValue.code.toString());
                             });
 
 
-
                             pr.hide();
-                            Navigator.push(
+                            Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => ProductScreen(
                                     )));
-
-
                             Get.snackbar(
                               "Login alert",
                               "Successfully login",

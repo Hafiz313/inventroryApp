@@ -44,8 +44,15 @@ class _ItemSelectScreenState extends State<ItemSelectScreen> {
     return BaseScaffold(
       body: Column(
         children: [
+          Container(
+            height: AppSizes.appVerticalLg * 2,
+            width: AppSizes.appHorizontalLg * 3,
+            child: Image(
+              image: AssetImage("images/logo.png"),
+            ),
+          ),
       Container(
-      margin: EdgeInsets.symmetric(vertical: 20,horizontal: 20),
+      margin: EdgeInsets.only(top:0,bottom: 10,left: 20,right: 10),
       child:
       TextField(
         controller: _controller,

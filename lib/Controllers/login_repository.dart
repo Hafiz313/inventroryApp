@@ -16,10 +16,16 @@ String baseUrl = "http://cserp.southeastasia.cloudapp.azure.com:55080/api/";
 
 class Repository {
 
-  static bool isLocationLoading=false;
+  static var isBrand=false.obs;
+  static var isCategory=false.obs;
+  static var isSubCategory=false.obs;
 
   //--------------get student account list------------
   static Future<bool>  getLogin(String userName,String password,String location,String fYear) async {
+
+    isBrand(false);
+    isCategory(false);
+    isSubCategory(false);
 
   var url = Uri.parse("http://cserp.southeastasia.cloudapp.azure.com:55080/api/Login?username=$userName&Password=$password&Location=$location&Fyear=$fYear");
    //var url = Uri.parse(baseUrl + "Login");
@@ -34,11 +40,13 @@ class Repository {
         },
       );
     //  print(response.body);
-      print("===${response.statusCode }====userName:$userName=======password:$password======location:$location====fYear:$fYear====response.body:${response.body}=====");
+  //    print("===${response.statusCode }====userName:$userName=======password:$password======location:$location====fYear:$fYear====response.body:${response.body}=====");
       if (response.statusCode == 200) {
 
 
-
+        getBrandList();
+        getCategoryList();
+        getSubcategoryList();
         return true;
       } else {
         print('Failed');
@@ -80,10 +88,11 @@ class Repository {
     try{
       final response = await http.get(url);
       var body = json.decode(response.body);
-      //  print(response.body);
 
 
       if (response.statusCode == 200) {
+        PreferenceUtils.setString(kShareBrandList,response.body);
+        isBrand(true);
         return  brandModelsFromJson(body);
 
       } else {
@@ -103,12 +112,16 @@ class Repository {
       final response = await http.get(url);
 
       var body = json.decode(response.body);
+
+
       print("========getCategoryList:$body============");
 
       //  print(response.body);
 
 
       if (response.statusCode == 200) {
+        PreferenceUtils.setString(kShareCateGoryList,response.body);
+        isCategory(true);
         return  categoryModelsFromJson(body);
 
       } else {
@@ -127,12 +140,14 @@ class Repository {
       final response = await http.get(url);
 
       var body = json.decode(response.body);
-      print("========getCategoryList:$body============");
+      print("========getSubcategoryList:$body============");
 
       //  print(response.body);
 
 
       if (response.statusCode == 200) {
+        PreferenceUtils.setString(kShareSubCategoryList,response.body);
+        isSubCategory(true);
 
         return  subcategoryModelsFromJson(body);
 
@@ -188,7 +203,7 @@ class Repository {
   static logOut() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.clear();
-    Get.offAllNamed("/SignIn");
+   //m Get.offAllNamed("/SignIn");
   }
 }
 

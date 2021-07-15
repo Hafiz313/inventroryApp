@@ -25,9 +25,18 @@ class _ItemResultScreenState extends State<ItemResultScreen> {
     return BaseScaffold(
       body:SingleChildScrollView(
         child: Column(
+
           children: [
+
             Container(
-                margin: EdgeInsets.symmetric(horizontal: 10,vertical: 20),
+              height: AppSizes.appVerticalLg * 2,
+              width: AppSizes.appHorizontalLg * 3,
+              child: Image(
+                image: AssetImage("images/logo.png"),
+              ),
+            ),
+            Container(
+                margin: EdgeInsets.only(left: 10,right: 10,bottom: 20),
                 alignment: Alignment.centerLeft,
                 child: Center(child: Text("${widget.inventoryResultModel.name}",style: simpleText(fontSize: 20,color: kAppPrimaryColor),textAlign: TextAlign.center,))),
             Container(

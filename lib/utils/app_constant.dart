@@ -6,6 +6,9 @@ const String kLoginAccessToken = "LoginAccessToken";
 const String kProfileResponse = "ProfileResponse";
 const String kShareLoginLocation = "loginLocation";
 const String kShareLoginFyear = "loginFyear";
+const String kShareBrandList = "brandList";
+const String kShareCateGoryList = "categoryList";
+const String kShareSubCategoryList = "SuCategoryList";
 
 
 

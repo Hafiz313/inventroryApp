@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:inventory_app/core/datamodels/InventoryResultModel.dart';
 import 'package:inventory_app/utils/app_color.dart';
+import 'package:inventory_app/utils/app_sizes.dart';
 import 'package:inventory_app/views/widgets/MyTextFormField.dart';
 
 import '../base_view.dart';
@@ -79,12 +80,19 @@ class _SearchListExampleState extends State<SearchListExample> {
   Widget build(BuildContext context) {
     return BaseScaffold(
       body: new Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          Container(
+            height: AppSizes.appVerticalLg * 2,
+            width: AppSizes.appHorizontalLg * 3,
+            child: Image(
+              image: AssetImage("images/logo.png"),
+            ),
+          ),
 
           Container(
-            margin: EdgeInsets.symmetric(vertical: 20,horizontal: 20),
+            margin: EdgeInsets.only(bottom: 20,left: 20,),
             child:
             TextField(
               controller: _controller,

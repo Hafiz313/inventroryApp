@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:inventory_app/utils/app_constant.dart';
 import 'package:inventory_app/utils/app_sizes.dart';
 import 'package:inventory_app/views/screen/logint_screen.dart';
+import 'package:inventory_app/views/screen/product_screen.dart';
 import 'package:inventory_app/views/screen/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home:LoginScreen(),
+      home:StatUpLogic(),
     );
   }
 }
@@ -42,8 +43,8 @@ class StatUpLogic extends StatelessWidget {
       future: SharedPreferences.getInstance(),
       builder: (_, prefs) {
         if (prefs.hasData) {
-          if (prefs.data.getString(kLoginUserId) != null) {
-            return SplashScreen();
+          if (prefs.data.getString(kShareLoginFyear) != null) {
+            return ProductScreen();
           } else {
             return LoginScreen();
           }
